@@ -18,6 +18,7 @@ MainWindow::~MainWindow()
 void MainWindow::paintEvent(QPaintEvent *)
 {
 	QPainter painter(this);
+	painter.fillRect(this->rect(), QBrush(Qt::black));
 	QRect rect(0, 0, width() / 2, height() / 2);
 	painter.setBrush(QBrush(Qt::red));
 	painter.drawRect(rect);
