@@ -21,8 +21,13 @@ protected:
 private slots:
 	void on_actionSave_triggered();
 
+	void on_actionNext_triggered();
+
+	void on_actionPrevious_triggered();
+
 private:
 	Ui::MainWindow *ui;
+	int step;
 };
 
 #endif // MAINWINDOW_H
