@@ -29,11 +29,15 @@ void MainWindow::on_actionSave_triggered()
 	if (!fileName.isEmpty()) {
 		int width = 256;
 		int height = 256;
-		QPixmap pixmap(width, height);
-		QPainter painter(&pixmap);
-		paint(&painter, width, height, _step);
-		QImage image = pixmap.toImage();
-		image.save(fileName);
+		QFileInfo info(fileName);
+		for (int i = 0; i < 8; i++) {
+			QPixmap pixmap(width, height);
+			QPainter painter(&pixmap);
+			paint(&painter, width, height, i);
+			QImage image = pixmap.toImage();
+			QString imageFileName = QDir(info.absolutePath()).filePath(info.completeBaseName() + QString("%0.png").arg(i, 3, 10, QChar('0')));
+			image.save(imageFileName);
+		}
 		_settings.setValue("lastDocument", fileName);
 	}
 }
