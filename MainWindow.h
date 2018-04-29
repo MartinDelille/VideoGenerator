@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QPainter>
+#include <QSettings>
 
 namespace Ui {
 class MainWindow;
@@ -12,8 +14,8 @@ class MainWindow : public QMainWindow
 	Q_OBJECT
 
 public:
-	explicit MainWindow(QWidget *parent = 0);
-	~MainWindow();
+	explicit MainWindow(QWidget *parent = nullptr);
+	~MainWindow() override;
 
 protected:
 	void paintEvent(QPaintEvent *) override;
@@ -26,8 +28,11 @@ private slots:
 	void on_actionPrevious_triggered();
 
 private:
+	void paint(QPainter *painter, int width, int height, int step);
+
 	Ui::MainWindow *ui;
-	int step;
+	QSettings _settings;
+	int _step;
 };
 
 #endif // MAINWINDOW_H

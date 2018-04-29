@@ -1,4 +1,3 @@
-#include <QPainter>
 #include <QFileDialog>
 
 #include "MainWindow.h"
@@ -7,7 +6,7 @@
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
 	ui(new Ui::MainWindow),
-	step(0)
+	_step(0)
 {
 	ui->setupUi(this);
 }
@@ -20,44 +19,55 @@ MainWindow::~MainWindow()
 void MainWindow::paintEvent(QPaintEvent *)
 {
 	QPainter painter(this);
-	painter.fillRect(this->rect(), QBrush(Qt::black));
-
-	if ( step % 2 == 0) {
-		painter.setBrush(QBrush(Qt::yellow));
-		painter.drawEllipse(this->rect());//, width() / 2, height() / 2);
-	}
-
-	QRect rect;
-	if ((step  / 2) % 2) {
-		rect.setX(width() / 2);
-	}
-	if ((step / 4) % 2) {
-		rect.setY(height() / 2);
-	}
-	rect.setWidth(width() / 2);
-	rect.setHeight(height() / 2);
-	painter.setBrush(QBrush(Qt::red));
-	painter.drawRect(rect);
+	paint(&painter, width(), height(), _step);
 }
 
 void MainWindow::on_actionSave_triggered()
 {
-	QString fileName = QFileDialog::getSaveFileName(this, tr("Save..."), "", "*.png");
+	QString fileName = QFileDialog::getSaveFileName(this, tr("Save..."), _settings.value("lastDocument", QDir::homePath()).toString(), "*.png");
 
 	if (!fileName.isEmpty()) {
-		QImage image = grab().toImage();
+		int width = 256;
+		int height = 256;
+		QPixmap pixmap(width, height);
+		QPainter painter(&pixmap);
+		paint(&painter, width, height, _step);
+		QImage image = pixmap.toImage();
 		image.save(fileName);
+		_settings.setValue("lastDocument", fileName);
 	}
 }
 
 void MainWindow::on_actionNext_triggered()
 {
-	step++;
+	_step++;
 	this->update();
 }
 
 void MainWindow::on_actionPrevious_triggered()
 {
-	step--;
+	_step--;
 	this->update();
+}
+
+void MainWindow::paint(QPainter *painter, int width, int height, int step)
+{
+	painter->fillRect(this->rect(), QBrush(Qt::black));
+
+	if ( step % 2 == 0) {
+		painter->setBrush(QBrush(Qt::yellow));
+		painter->drawEllipse(QRect(0, 0, width, height));
+	}
+
+	QRect rect;
+	if ((step  / 2) % 2) {
+		rect.setX(width / 2);
+	}
+	if ((step / 4) % 2) {
+		rect.setY(height / 2);
+	}
+	rect.setWidth(width / 2);
+	rect.setHeight(height / 2);
+	painter->setBrush(QBrush(Qt::red));
+	painter->drawRect(rect);
 }
